@@ -10,6 +10,8 @@ const messageSchema = new mongoose.Schema(
     },
     content: { type: String, required: true },
     group: { type: Boolean, default: false },
+    receiver: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Receiver for direct messages
+    groupId: { type: mongoose.Schema.Types.ObjectId, ref: "Group" }, // Group ID for group messages
     createdAt: { type: Date, default: Date.now },
   },
   { timestamps: true }

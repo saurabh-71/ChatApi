@@ -51,10 +51,27 @@ router.get("/messages", verifyToken, async (req, res) => {
     const messages = await Message.find()
       .populate("sender", "username")
       .populate("receiver", "username")
-      .populate("groupId", "name"); // Assuming you want group name too
+      .populate("groupId", "name");
+
     res.json(messages);
   } catch (error) {
     res.status(500).json({ message: "Error fetching messages", error });
+  }
+});
+
+// Get messages for a specific group
+router.get("/messages/group/:groupId", verifyToken, async (req, res) => {
+  const { groupId } = req.params;
+
+  try {
+    const messages = await Message.find({ groupId }).populate(
+      "sender",
+      "username"
+    );
+
+    res.json(messages);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching group messages", error });
   }
 });
 

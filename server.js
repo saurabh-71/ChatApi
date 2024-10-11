@@ -1,10 +1,10 @@
-// server.js
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const authRoutes = require("./routes/auth");
 const chatRoutes = require("./routes/chat");
+const groupRoutes = require("./routes/group");
 const http = require("http");
 const socketIo = require("socket.io");
 
@@ -62,6 +62,7 @@ mongoose
 // Set up routes
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/groups", groupRoutes); // Add group routes
 
 // Socket.io events
 io.on("connection", (socket) => {
@@ -69,6 +70,16 @@ io.on("connection", (socket) => {
 
   socket.on("sendMessage", (message) => {
     io.emit("receiveMessage", message);
+  });
+
+  // Handle group messages
+  socket.on("sendGroupMessage", (message) => {
+    io.to(message.groupId).emit("receiveGroupMessage", message);
+  });
+
+  socket.on("joinGroup", (groupId) => {
+    socket.join(groupId);
+    console.log(`User joined group: ${groupId}`);
   });
 
   socket.on("disconnect", () => {

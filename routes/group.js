@@ -1,3 +1,4 @@
+// routes/group.js
 const express = require("express");
 const verifyToken = require("../middleware/auth");
 const Group = require("../models/Group");
@@ -15,7 +16,10 @@ router.post("/", verifyToken, async (req, res) => {
     await group.save();
     res.status(201).json({ message: "Group created successfully!", group });
   } catch (error) {
-    res.status(500).json({ message: "Error creating group", error });
+    console.error(error); // Log the error for debugging
+    res
+      .status(500)
+      .json({ message: "Error creating group", error: error.message });
   }
 });
 
@@ -28,7 +32,10 @@ router.get("/", verifyToken, async (req, res) => {
     );
     res.json(groups);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching groups", error });
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Error fetching groups", error: error.message });
   }
 });
 
@@ -38,12 +45,19 @@ router.post("/:groupId/members", verifyToken, async (req, res) => {
   const { userId } = req.body;
 
   try {
-    const group = await Group.findByIdAndUpdate(groupId, {
-      $addToSet: { members: userId },
-    });
+    const group = await Group.findByIdAndUpdate(
+      groupId,
+      {
+        $addToSet: { members: userId }, // Use $addToSet to avoid duplicates
+      },
+      { new: true }
+    );
     res.json({ message: "User added to group", group });
   } catch (error) {
-    res.status(500).json({ message: "Error adding user to group", error });
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Error adding user to group", error: error.message });
   }
 });
 

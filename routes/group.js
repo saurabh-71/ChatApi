@@ -4,7 +4,7 @@ const Group = require("../models/Group");
 const router = express.Router();
 
 // Create a group
-router.post("/", verifyToken, async (req, res) => {
+router.post("/createGroup", verifyToken, async (req, res) => {
   const { name, members } = req.body;
 
   try {

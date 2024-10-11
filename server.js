@@ -36,8 +36,11 @@ app.use(
   })
 );
 
+// Create the HTTP server
+const server = http.createServer(app);
+
 // Socket.IO CORS configuration
-const ios = socketIO(server, {
+const io = socketIo(server, {
   cors: {
     origin: allowedOrigins, // Use the array for allowed origins
     methods: ["GET", "POST"],
@@ -59,10 +62,6 @@ mongoose
 // Set up routes
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
-
-// Start the server
-const server = http.createServer(app);
-const io = socketIo(server);
 
 // Socket.io events
 io.on("connection", (socket) => {
